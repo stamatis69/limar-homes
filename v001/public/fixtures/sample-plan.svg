@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800" height="600" font-family="monospace">
+  <rect width="800" height="600" fill="#FBFAF7"/>
+  <g fill="none" stroke="#1B1A18" stroke-width="6">
+    <rect x="80" y="80" width="640" height="420"/>
+    <line x1="400" y1="80" x2="400" y2="330"/>
+    <line x1="80" y1="330" x2="560" y2="330"/>
+    <line x1="560" y1="330" x2="560" y2="500"/>
+  </g>
+  <g fill="#57534C" font-size="18">
+    <text x="190" y="210">LIVING</text><text x="520" y="210">BEDROOM</text><text x="250" y="420">KITCHEN</text><text x="600" y="420">BATH</text>
+  </g>
+  <text x="400" y="560" text-anchor="middle" font-size="20" fill="#8A6538">SAMPLE PLAN · QA FIXTURE · NOT A REAL LAYOUT</text>
+</svg>
