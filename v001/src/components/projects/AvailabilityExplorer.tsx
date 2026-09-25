@@ -30,6 +30,7 @@ export function AvailabilityExplorer({ locale, development, units, asOf, dict }:
   const [availableOnly, setAvailableOnly] = useState(false);
   const [open, setOpen] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
   const bedroomOptions = useMemo(() => [...new Set(units.map((u) => u.bedrooms))].sort(), [units]);
   const floors = useMemo(() => [...new Set(units.map((u) => u.floor))].sort((a, b) => b - a), [units]);
@@ -38,7 +39,11 @@ export function AvailabilityExplorer({ locale, development, units, asOf, dict }:
     const onFloor = units.filter((u) => u.floor === f);
     return { floor: f, total: onFloor.length, available: onFloor.filter((u) => u.status === "available").length };
   });
-  const visible = floor == null ? filtered : filtered.filter((u) => u.floor === floor);
+  const onFloor = floor == null ? filtered : filtered.filter((u) => u.floor === floor);
+  // Long schedules: show a first page when no floor is chosen, so mobile buyers are not handed 40+ rows.
+  const PAGE = 12;
+  const truncated = floor == null && !showAll && !open && onFloor.length > PAGE;
+  const visible = truncated ? onFloor.slice(0, PAGE) : onFloor;
 
   // Deep link: ?unit=<id> opens the unit and selects its floor.
   useEffect(() => {
@@ -197,6 +202,11 @@ export function AvailabilityExplorer({ locale, development, units, asOf, dict }:
                 );
               })}
             </ul>
+            {truncated && (
+              <button type="button" className="btn btn--quiet" style={{ marginTop: "var(--s-4)", width: "100%" }} onClick={() => setShowAll(true)}>
+                {fill(d.showAll, { count: onFloor.length })}
+              </button>
+            )}
           </div>
         </div>
       ) : (

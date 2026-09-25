@@ -85,6 +85,7 @@ test.describe("Comparison acceptance (brief §60)", () => {
   test("limit is enforced and communicated", async ({ page }) => {
     await page.goto("/projects/fixture-stress-test-residences");
     for (const id of ["fixture-stress:0.01", "fixture-stress:0.02", "fixture-stress:1.01", "fixture-stress:1.03"]) await addToCompare(page, id);
+    await page.getByRole("button", { name: /^Show all \d+ residences$/ }).click();
     await page.locator('[data-compare="fixture-stress:2.02"]').click();
     await expect(page.getByRole("status").filter({ hasText: "up to 4 residences" })).toBeVisible();
     await expect(page.locator('[data-compare="fixture-stress:2.02"]')).toHaveAttribute("aria-pressed", "false");

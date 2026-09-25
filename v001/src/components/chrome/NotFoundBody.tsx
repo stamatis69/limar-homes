@@ -4,15 +4,16 @@ import { usePathname } from "next/navigation";
 import en from "@/lib/i18n/dictionaries/en";
 import el from "@/lib/i18n/dictionaries/el";
 import tr from "@/lib/i18n/dictionaries/tr";
-import { href, resolvePublicPath, type Locale } from "@/lib/i18n/routes";
+import { href, isLocale, type Locale } from "@/lib/i18n/routes";
 
 const dicts = { en, el, tr };
 
 /** Client-side so the [locale] segment stays statically generated (no request headers needed). */
 export function NotFoundBody() {
   const pathname = usePathname();
-  const r = resolvePublicPath(pathname ?? "/");
-  const locale: Locale = r.kind === "ok" ? r.locale : "en";
+  // First segment is the same in internal (/el/projects/x) and public (/el/erga/x) forms → hydration-safe.
+  const first = (pathname ?? "/").split("/")[1] ?? "";
+  const locale: Locale = isLocale(first) ? first : "en";
   const dict = dicts[locale];
   const links = [
     { path: "/projects", label: dict.nav.developments },

@@ -5,6 +5,8 @@ import { Elevation } from "@/components/Elevation";
 import { JsonLd } from "@/components/JsonLd";
 import { ChapterHead, Metric, StateMark } from "@/components/ui";
 import { AvailabilityExplorer } from "@/components/projects/AvailabilityExplorer";
+import { Gallery } from "@/components/projects/Gallery";
+import Image from "next/image";
 import { TrackView } from "@/components/chrome/Dock";
 import { availableCount, getCatalog, getDevelopmentBySlug, unitsFor } from "@/data/catalog";
 import { getDictionary } from "@/lib/i18n";
@@ -12,6 +14,9 @@ import { href, isLocale, locales, type Locale } from "@/lib/i18n/routes";
 import { fill, formatRange, loc } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 import { breadcrumbLd, developmentLd } from "@/lib/structured-data";
+
+/** Unknown slugs render on demand and hit notFound() (clean 404, no internal no-fallback error). */
+export const dynamicParams = true;
 
 export function generateStaticParams() {
   return locales.flatMap((locale) => getCatalog().developments.map((d) => ({ locale, slug: d.slug })));
@@ -93,11 +98,17 @@ export default async function DevelopmentPage({ params }: PageProps<"/[locale]/p
               )}
             </div>
           </div>
-          <Elevation
-            spec={dev.drawing}
-            title={`${dev.name} — ${dict.common.schematic}`}
-            caption={`${dict.common.sheet} ${dev.sheet} · ${dev.name} · ${dev.drawing.illustrative ? dict.common.illustrative : dict.common.schematic}`}
-          />
+          {dev.media.hero ? (
+            <figure className="hero-photo">
+              <Image src={dev.media.hero.src} alt={loc(dev.media.hero.alt, locale)} width={dev.media.hero.width} height={dev.media.hero.height} priority sizes="(max-width: 900px) 100vw, 55vw" />
+            </figure>
+          ) : (
+            <Elevation
+              spec={dev.drawing}
+              title={`${dev.name} — ${dict.common.schematic}`}
+              caption={`${dict.common.sheet} ${dev.sheet} · ${dev.name} · ${dev.drawing.illustrative ? dict.common.illustrative : dict.common.schematic}`}
+            />
+          )}
         </div>
         <dl className="metrics" style={{ marginTop: "var(--s-7)" }} aria-label={dict.development.metrics}>
           <Metric label={dict.common.units} value={loc(dev.unitsTotalLabel, locale)} tbc={t.includes("unitsTotal")} />
@@ -138,7 +149,16 @@ export default async function DevelopmentPage({ params }: PageProps<"/[locale]/p
               <p className="label">{dict.development.galleryTitle}</p>
               <p>{dict.development.galleryPending}</p>
             </div>
-          ) : null}
+          ) : (
+            <Elevation spec={dev.drawing} title={`${dev.name} — ${dict.common.schematic}`} caption={dict.common.schematic} animate={false} />
+          )}
+        </div>
+        {dev.media.gallery.length > 0 && (
+          <div style={{ marginTop: "var(--s-7)" }}>
+            <Gallery media={dev.media.gallery} locale={locale} labels={dict.development.galleryKinds} />
+          </div>
+        )}
+        <div>
         </div>
       </section>
 

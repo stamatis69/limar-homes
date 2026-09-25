@@ -1,7 +1,6 @@
-import "@fontsource-variable/noto-serif-display";
-import "@fontsource-variable/commissioner";
-import "@fontsource-variable/jetbrains-mono";
+import "@/styles/fonts.css";
 import "@/styles/globals.css";
+import { preload } from "react-dom";
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { Header } from "@/components/chrome/Header";
@@ -19,7 +18,6 @@ export function generateStaticParams() {
   return locales.map((locale) => ({ locale }));
 }
 
-export const dynamicParams = false;
 
 export const viewport: Viewport = {
   width: "device-width",
@@ -51,6 +49,11 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
   if (!isLocale(locale)) notFound();
   const dict = getDictionary(locale);
   const catalog = getCatalog();
+  // Preload only the subsets the first screen needs: display + text face, in this locale's script.
+  const script = locale === "el" ? "greek" : "latin";
+  for (const fam of ["noto-serif-display", "commissioner"]) {
+    preload(`/fonts/${fam}-${script}-wght-normal.woff2`, { as: "font", type: "font/woff2", crossOrigin: "anonymous" });
+  }
   const footerDevs = catalog.developments.filter((d) => d.id !== "fixture-stress").map((d) => ({ slug: d.slug, name: d.name }));
 
   return (

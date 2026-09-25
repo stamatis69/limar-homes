@@ -9,6 +9,9 @@ import { fill, loc } from "@/lib/format";
 import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
+/** Unknown slugs render on demand and hit notFound() (clean 404, no internal no-fallback error). */
+export const dynamicParams = true;
+
 export function generateStaticParams() {
   return locales.flatMap((locale) => articles.map((a) => ({ locale, slug: a.slug })));
 }

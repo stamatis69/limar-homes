@@ -31,7 +31,10 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
   images: { formats: ["image/avif", "image/webp"] },
   async redirects() {
-    return legacyRedirects.map((r) => ({ ...r, permanent: true }));
+    return [
+      ...legacyRedirects.map((r) => ({ ...r, permanent: true })),
+      { source: "/favicon.ico", destination: "/icon.svg", permanent: true },
+    ];
   },
   async headers() {
     const headers = [

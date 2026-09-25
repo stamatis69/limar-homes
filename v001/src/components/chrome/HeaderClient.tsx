@@ -3,6 +3,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState, type ReactNode } from "react";
 import { href, locales, resolvePublicPath, type Locale } from "@/lib/i18n/routes";
+import { usePublicPath } from "@/lib/client/use-public-path";
 
 const labels: Record<Locale, { short: string; name: string }> = {
   en: { short: "EN", name: "English" },
@@ -16,8 +17,8 @@ function internalOf(pathname: string): string {
 }
 
 export function NavLink({ href: to, children }: { href: string; children: ReactNode }) {
-  const pathname = usePathname();
-  const active = pathname === to || (to !== "/" && pathname.startsWith(to + "/"));
+  const pathname = usePublicPath();
+  const active = pathname != null && (pathname === to || (to !== "/" && pathname.startsWith(to + "/")));
   return (
     <Link href={to} aria-current={active ? "page" : undefined}>
       {children}
@@ -26,8 +27,8 @@ export function NavLink({ href: to, children }: { href: string; children: ReactN
 }
 
 export function LanguageSwitch({ locale, label }: { locale: Locale; label: string }) {
-  const pathname = usePathname();
-  const internal = internalOf(pathname);
+  const pathname = usePublicPath();
+  const internal = pathname ? internalOf(pathname) : "/";
   return (
     <nav className="lang-switch" aria-label={label}>
       {locales.map((l) => (

@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import { DevelopmentIndex, type IndexEntry } from "@/components/projects/DevelopmentIndex";
 import { JsonLd } from "@/components/JsonLd";
 import { availableCount, getCatalog } from "@/data/catalog";
@@ -29,9 +28,7 @@ export default async function ProjectsPage({ params }: PageProps<"/[locale]/proj
         <p className="lead">{dict.projects.lead}</p>
       </section>
       <section className="shell" style={{ paddingBottom: "var(--s-9)" }}>
-        <Suspense>
-          <DevelopmentIndex locale={locale} entries={entries} dict={{ projects: dict.projects, common: dict.common, status: dict.status }} />
-        </Suspense>
+        <DevelopmentIndex locale={locale} entries={entries} dict={{ projects: dict.projects, common: dict.common, status: dict.status }} />
       </section>
       <JsonLd data={breadcrumbLd([{ name: "Limar Homes", url: href(locale, "/") }, { name: dict.projects.title, url: href(locale, "/projects") }])} />
     </>

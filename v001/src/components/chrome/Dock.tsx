@@ -7,6 +7,7 @@ import { consentStore, useConsent } from "@/lib/client/consent-store";
 import { useResolvedUnits } from "@/lib/client/use-resolved-units";
 import { track } from "@/lib/client/analytics";
 import { notePath } from "@/lib/client/nav-memory";
+import { usePublicPath } from "@/lib/client/use-public-path";
 import { fill } from "@/lib/format";
 import { href, resolvePublicPath, type Locale } from "@/lib/i18n/routes";
 
@@ -29,7 +30,8 @@ export function Dock({ locale, labels }: { locale: Locale; labels: DockLabels })
   const consent = useConsent();
   const compare = useCompare();
   const pathname = usePathname();
-  const resolved = resolvePublicPath(pathname);
+  const publicPath = usePublicPath();
+  const resolved = resolvePublicPath(publicPath ?? "/");
   const internal = resolved.kind === "ok" ? resolved.internalPath : "/";
   const onCompare = internal.startsWith("/compare");
   const onEnquire = internal.startsWith("/enquire");
@@ -42,7 +44,8 @@ export function Dock({ locale, labels }: { locale: Locale; labels: DockLabels })
   };
 
   let mode: "consent" | "tray" | "cta" | "none" = "none";
-  if (consent === "unknown") mode = "consent";
+  if (publicPath === null) mode = "none";
+  else if (consent === "unknown") mode = "consent";
   else if (compare.ids.length > 0 && !onCompare && !onEnquire) mode = "tray";
   else if (devMatch) mode = "cta";
 

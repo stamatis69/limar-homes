@@ -72,7 +72,14 @@ export const fixtureDevelopment: Development = {
   floors: 7,
   amenities: ["elevator", "parking", "garden"],
   goldenVisa: { limarStatement: false, route: "unconfirmed" },
-  media: { hero: null, gallery: [] },
+  media: {
+    hero: null,
+    gallery: [
+      { src: "/fixtures/gallery-sample.png", alt: { en: "Fixture image (exterior)", el: "Δοκιμαστική εικόνα (εξωτερικά)", tr: "Test görseli (dış)" }, width: 1200, height: 630, kind: "exterior" },
+      { src: "/fixtures/gallery-sample.png", alt: { en: "Fixture image (exterior, 2)", el: "Δοκιμαστική εικόνα 2", tr: "Test görseli 2" }, width: 1200, height: 630, kind: "exterior" },
+      { src: "/fixtures/sample-plan.svg", alt: { en: "Fixture plan", el: "Δοκιμαστική κάτοψη", tr: "Test planı" }, width: 800, height: 600, kind: "floorplan" },
+    ],
+  },
   brochure: null,
   drawing: { floors: 6, bays: 6, roof: "terrace", ground: "garden", features: ["garden", "pergola"], illustrative: true },
   copy: {

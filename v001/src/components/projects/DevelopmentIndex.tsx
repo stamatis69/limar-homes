@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useSyncExternalStore } from "react";
 import { Elevation } from "@/components/Elevation";
 import { StateMark } from "@/components/ui";
 import type { Dictionary } from "@/lib/i18n";
@@ -15,10 +15,23 @@ export interface IndexEntry {
 
 type Dict = Pick<Dictionary, "projects" | "common" | "status">;
 
+const SEARCH_EVENT = "limar:search";
+function subscribeSearch(cb: () => void) {
+  window.addEventListener("popstate", cb);
+  window.addEventListener(SEARCH_EVENT, cb);
+  return () => {
+    window.removeEventListener("popstate", cb);
+    window.removeEventListener(SEARCH_EVENT, cb);
+  };
+}
+
+/**
+ * Filters live in the URL (?status=&region=) so results are shareable. The server renders the full,
+ * unfiltered list (static HTML, no layout shift); URL filters apply after hydration.
+ */
 export function DevelopmentIndex({ locale, entries, dict }: { locale: Locale; entries: IndexEntry[]; dict: Dict }) {
-  const params = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
+  const search = useSyncExternalStore(subscribeSearch, () => window.location.search, () => "");
+  const params = new URLSearchParams(search);
   const status = params.get("status") ?? "all";
   const region = params.get("region") ?? "all";
 
@@ -30,7 +43,8 @@ export function DevelopmentIndex({ locale, entries, dict }: { locale: Locale; en
     if (value === "all") next.delete(key);
     else next.set(key, value);
     const qs = next.toString();
-    router.replace(qs ? `${pathname}?${qs}` : pathname, { scroll: false });
+    window.history.replaceState(null, "", qs ? `${window.location.pathname}?${qs}` : window.location.pathname);
+    window.dispatchEvent(new Event(SEARCH_EVENT));
   };
 
   const shown = entries.filter((e) => (status === "all" || e.dev.status === status) && (region === "all" || e.dev.region === region));
@@ -43,7 +57,7 @@ export function DevelopmentIndex({ locale, entries, dict }: { locale: Locale; en
       <form className="filters" aria-label={dict.projects.filterLabel} onSubmit={(e) => e.preventDefault()}>
         {statuses.length > 1 && (
           <fieldset>
-            <legend className="visually-hidden">{dict.common.status}</legend>
+            <legend className="label" style={{ minWidth: 90 }}>{dict.common.status}</legend>
             {[
               ["all", dict.projects.filterAll],
               ["selling", dict.projects.filterSelling],
@@ -58,7 +72,7 @@ export function DevelopmentIndex({ locale, entries, dict }: { locale: Locale; en
         )}
         {regions.length > 1 && (
           <fieldset>
-            <legend className="visually-hidden">{dict.common.location}</legend>
+            <legend className="label" style={{ minWidth: 90 }}>{dict.common.location}</legend>
             {[
               ["all", dict.projects.filterAll],
               ["attica", dict.projects.filterAttica],
@@ -79,7 +93,10 @@ export function DevelopmentIndex({ locale, entries, dict }: { locale: Locale; en
       {shown.length === 0 ? (
         <div className="pending-slot" style={{ marginTop: "var(--s-6)" }}>
           <p>{dict.projects.empty}</p>
-          <button type="button" className="btn btn--small" onClick={() => router.replace(pathname, { scroll: false })}>
+          <button type="button" className="btn btn--small" onClick={() => {
+              window.history.replaceState(null, "", window.location.pathname);
+              window.dispatchEvent(new Event(SEARCH_EVENT));
+            }}>
             {dict.projects.clear}
           </button>
         </div>

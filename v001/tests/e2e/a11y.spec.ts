@@ -22,8 +22,10 @@ test.describe("Accessibility (WCAG 2.2 AA, axe)", () => {
 
   test("interactive states: explorer details, comparison, pathfinder result, enquiry errors", async ({ page }) => {
     await page.goto("/projects/terrace-heights");
+    await page.locator(".floor-list button", { hasText: "03" }).click();
     await page.locator("li.unit-row", { hasText: "B302" }).getByRole("button", { name: "Details" }).click();
     await audit(page, "explorer-details");
+    await page.locator(".floor-list button", { hasText: "All floors" }).click();
     await addToCompare(page, "terrace-heights:B102");
     await addToCompare(page, "terrace-heights:D104");
     await page.goto("/compare");
