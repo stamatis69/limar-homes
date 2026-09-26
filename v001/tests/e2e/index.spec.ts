@@ -23,3 +23,20 @@ test.describe("Development index", () => {
     await expect(page).toHaveURL(/\/projects$/);
   });
 });
+
+test.describe("Insights index", () => {
+  test.beforeEach(async ({ page }) => decideConsent(page));
+
+  test("is static HTML with every article; category filter is URL-backed", async ({ page, request }) => {
+    const html = await (await request.get("/news")).text();
+    expect(html).toContain("Greece&#x27;s Golden Visa after Law 5100/2024");
+    expect(html).toContain("Buying a home in Greece from abroad");
+    await page.goto("/news");
+    await page.getByRole("radio", { name: "Golden Visa" }).check();
+    await expect(page).toHaveURL(/\?category=golden-visa$/);
+    await expect(page.getByRole("link", { name: /Law 5100\/2024/ })).toBeVisible();
+    await expect(page.getByRole("link", { name: /Buying a home in Greece/ })).toHaveCount(0);
+    await page.goto("/el/nea?category=market");
+    await expect(page.getByRole("link", { name: /Αγορά κατοικίας στην Ελλάδα/ })).toBeVisible();
+  });
+});

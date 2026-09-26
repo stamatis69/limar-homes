@@ -7,6 +7,7 @@ import { consentStore, useConsent } from "@/lib/client/consent-store";
 import { useResolvedUnits } from "@/lib/client/use-resolved-units";
 import { track } from "@/lib/client/analytics";
 import { notePath } from "@/lib/client/nav-memory";
+import { recordFirstTouch } from "@/lib/client/campaign";
 import { usePublicPath } from "@/lib/client/use-public-path";
 import { fill } from "@/lib/format";
 import { href, resolvePublicPath, type Locale } from "@/lib/i18n/routes";
@@ -38,6 +39,13 @@ export function Dock({ locale, labels }: { locale: Locale; labels: DockLabels })
   const devMatch = internal.match(/^\/projects\/([^/]+)/);
   const ref = useRef<HTMLDivElement>(null);
   useEffect(() => notePath(pathname + window.location.hash), [pathname]);
+  // Attribution waits for consent; granting it on the landing page still captures that page's UTMs.
+  // Read the store directly: during hydration the hook still reports the server snapshot ("denied"),
+  // which must not be mistaken for a withdrawal of consent.
+  useEffect(() => {
+    const actual = consentStore.get();
+    if (actual !== "unknown") recordFirstTouch(actual === "granted");
+  }, [consent, pathname]);
   const liveRef = useRef<HTMLParagraphElement>(null);
   const announce = (msg: string) => {
     if (liveRef.current) liveRef.current.textContent = msg;

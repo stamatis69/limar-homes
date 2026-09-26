@@ -6,6 +6,7 @@ import { useCompare } from "@/lib/client/compare-store";
 import { consentStore } from "@/lib/client/consent-store";
 import { track } from "@/lib/client/analytics";
 import { previousPath } from "@/lib/client/nav-memory";
+import { campaignForEnquiry } from "@/lib/client/campaign";
 import { BUDGETS, FIELDS, INTERESTS, validateField, type ErrorCode, type Field } from "@/lib/enquiry/validation";
 import type { Dictionary } from "@/lib/i18n";
 import { href, type Locale } from "@/lib/i18n/routes";
@@ -153,7 +154,7 @@ export function EnquiryForm({
     inFlight.current = true;
     setStatus("submitting");
     track("enquiry_submit", { interest: values.interest, developmentId: context.development?.id, unitId: context.unit?.id });
-    const campaign = consentStore.get() === "granted" ? utm() : null;
+    const campaign = campaignForEnquiry(consentStore.get() === "granted");
     const body = {
       ...values,
       startedAt: startedAt.current,
@@ -557,12 +558,3 @@ function sourcePage(): string {
   return window.location.pathname;
 }
 
-function utm(): Record<string, string> | null {
-  const p = new URLSearchParams(window.location.search);
-  const out: Record<string, string> = {};
-  for (const k of ["utm_source", "utm_medium", "utm_campaign", "utm_content", "utm_term"]) {
-    const v = p.get(k);
-    if (v) out[k] = v;
-  }
-  return Object.keys(out).length ? out : null;
-}

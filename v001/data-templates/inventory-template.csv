@@ -1,0 +1,2 @@
+development,unit,floor,bedrooms,bathrooms,area_m2,outdoor_m2,status,price_eur,orientation,parking,floorplan
+# Example (lines starting with # are ignored): terrace-heights,A101,1,1,1,"41,5",6,available,,SE,no,/media/terrace-heights/plans/A101.png

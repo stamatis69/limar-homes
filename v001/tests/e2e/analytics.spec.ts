@@ -25,3 +25,40 @@ test.describe("Analytics respects consent and carries no PII", () => {
     expect(serialized).not.toContain("nadia@example.com");
   });
 });
+
+import { readFileSync } from "node:fs";
+import path from "node:path";
+
+const lastDelivered = () => {
+  const lines = readFileSync(path.join(__dirname, "../../.data/enquiries.ndjson"), "utf8").trim().split("\n");
+  return JSON.parse(lines[lines.length - 1]!);
+};
+
+async function enquireFromCampaignLanding(page: import("@playwright/test").Page) {
+  await page.goto("/?utm_source=newsletter&utm_campaign=gv-autumn&email=leak@example.com");
+  await page.getByRole("link", { name: "Explore developments" }).first().click();
+  await page.goto("/enquire?development=terrace-heights");
+  await page.locator("#f-firstName").fill("Omar");
+  await page.locator("#f-lastName").fill("K");
+  await page.locator("#f-email").fill("omar@example.com");
+  await page.locator("#f-country").selectOption("AE");
+  await page.waitForTimeout(2600);
+  await page.getByRole("button", { name: /Send enquiry/ }).click();
+  await expect(page.getByTestId("confirmation")).toBeVisible();
+  return lastDelivered();
+}
+
+test.describe("Campaign attribution", () => {
+  test("first-touch UTMs survive navigation into the enquiry — with consent", async ({ page }) => {
+    await decideConsent(page, true);
+    const delivered = await enquireFromCampaignLanding(page);
+    expect(delivered.campaignSource).toEqual({ utm_source: "newsletter", utm_campaign: "gv-autumn" });
+  });
+
+  test("nothing is recorded without consent", async ({ page }) => {
+    await decideConsent(page, false);
+    const delivered = await enquireFromCampaignLanding(page);
+    expect(delivered.campaignSource).toBeNull();
+    expect(await page.evaluate(() => sessionStorage.getItem("limar.campaign.v1"))).toBeNull();
+  });
+});
