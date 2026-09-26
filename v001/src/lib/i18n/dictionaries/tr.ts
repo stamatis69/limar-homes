@@ -54,6 +54,10 @@ const tr: Dictionary = {
     notProvided: "Belirtilmedi",
     schematic: "Şematik cephe, ölçeksiz",
     illustrative: "Temsilî kütle: kat sayısı teyit edilmedi",
+    massingCaption: "Yayımlanan kat sayısından şematik 3B kütle, mimari tasarım değildir",
+    massingLabel: "{name}: yayımlanan kat sayısından üretilmiş şematik 3B kütle modeli. Mimari tasarım değildir.",
+    dragToRotate: "Döndürmek için sürükleyin",
+    scrollCue: "Kaydır",
     sqm: "m²",
     bedroomsShort: "y.o.",
     bedroom: "yatak odası",
@@ -112,6 +116,7 @@ const tr: Dictionary = {
     banner: "Gösterim envanteri: bu sürümdeki konut verileri test verisidir, gerçek müsaitlik değildir.",
   },
   home: {
+    statement: "Tek bir ekip her binayı arsadan anahtar teslimine kadar götürür: tasarlar, inşa eder ve satar. Bugüne kadar Atina ve Korint'te {count} bina.",
     heroKicker: "Konut geliştirme · Atina · Yunanistan",
     heroTitleA: "Yaşamak için inşa edildi.",
     heroTitleB: "Sahip olmak için yapılandırıldı.",

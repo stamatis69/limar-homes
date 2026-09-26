@@ -60,7 +60,9 @@ export function MobileMenu({
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && setOpenOn(null);
     document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
+    window.dispatchEvent(new CustomEvent("limar:scroll-lock", { detail: true }));
     return () => {
+      window.dispatchEvent(new CustomEvent("limar:scroll-lock", { detail: false }));
       document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
@@ -71,7 +73,7 @@ export function MobileMenu({
         {open ? l.close : l.menu}
       </button>
       {open && (
-        <div id="mobile-nav" className="mobile-nav">
+        <div id="mobile-nav" className="mobile-nav" data-lenis-prevent="">
           <ul>
             {items.map((i) => (
               <li key={i.href}>

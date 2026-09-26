@@ -13,6 +13,13 @@
 6. **Routing:** English stays at the root, preserving indexed URLs. `/el` and `/tr` use localized segments. Legacy singular slugs get a 301 and `/nyt-vote` returns 410.
 7. **Enquiries:** one validator is shared by client and server. The server resolves all property context itself. Delivery goes to a signed webhook. Production with no delivery target returns 503 and never shows a fake success.
 8. **Merqon signature:** centralized in `src/lib/merqon.ts`. The visible credit is "Designed & developed by Merqon Group". The machine layer is on in development (`MQ-DEV-PENDING`) and switched **off in production** until a real Site ID exists.
+9. **Revision 2, premium experience (2026-09-26, at the client's request):**
+   - Palette re-cut as "Obsidian & Travertine" (quiet luxury), with every text pairing AA.
+   - Obsidian chapters.
+   - A WebGL schematic massing model built only from the verified `DrawingSpec`: captioned as schematic, hardware WebGL only, poster fallback.
+   - Site-wide scroll choreography: Lenis, reveals, word-fill, pinned horizontal portfolio, counters and 3D tilt.
+   - It is safe without JavaScript and under reduced motion, and covered by `experience.spec.ts`.
+10. **Dependencies added:** `three` and `lenis` (both MIT, recorded in `ASSET_SOURCES.md`). three.js is a lazy chunk that is never downloaded where WebGL would run in software.
 
 ## Evidence
 See `PROJECT_STATE.md` at the repository root for the evidence ledger and measurements.

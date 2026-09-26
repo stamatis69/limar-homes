@@ -1,5 +1,6 @@
 import "@/styles/fonts.css";
 import "@/styles/globals.css";
+import "@/styles/experience.css";
 import { preload } from "react-dom";
 import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
@@ -7,6 +8,7 @@ import { Header } from "@/components/chrome/Header";
 import { Footer } from "@/components/chrome/Footer";
 import { Dock } from "@/components/chrome/Dock";
 import { JsonLd } from "@/components/JsonLd";
+import { MotionRoot } from "@/components/motion/MotionRoot";
 import { getCatalog } from "@/data/catalog";
 import { getDictionary } from "@/lib/i18n";
 import { htmlLang, isLocale, locales } from "@/lib/i18n/routes";
@@ -23,7 +25,7 @@ export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
-  themeColor: "#f1ece3",
+  themeColor: "#0e1114",
 };
 
 export async function generateMetadata({ params }: LayoutProps<"/[locale]">): Promise<Metadata> {
@@ -83,6 +85,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
           }}
         />
         <JsonLd data={organizationLd()} />
+        <MotionRoot />
       </body>
     </html>
   );

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { COMPARE_MAX, compareStore, useCompare } from "@/lib/client/compare-store";
 import { consentStore, useConsent } from "@/lib/client/consent-store";
 import { useResolvedUnits } from "@/lib/client/use-resolved-units";
@@ -57,12 +57,15 @@ export function Dock({ locale, labels }: { locale: Locale; labels: DockLabels })
   else if (compare.ids.length > 0 && !onCompare && !onEnquire) mode = "tray";
   else if (devMatch) mode = "cta";
 
-  useLayoutEffect(() => {
+  // ResizeObserver reports the dock's height after layout and before paint, so body padding follows
+  // without forcing a synchronous layout during hydration.
+  useEffect(() => {
     const el = ref.current;
-    const set = () => document.documentElement.style.setProperty("--dock-h", `${el?.offsetHeight ?? 0}px`);
-    set();
     if (!el) return;
-    const ro = new ResizeObserver(set);
+    const ro = new ResizeObserver(([entry]) => {
+      const h = entry?.borderBoxSize?.[0]?.blockSize ?? el.offsetHeight;
+      document.documentElement.style.setProperty("--dock-h", `${Math.round(h)}px`);
+    });
     ro.observe(el);
     return () => ro.disconnect();
   }, [mode]);

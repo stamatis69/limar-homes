@@ -51,6 +51,10 @@ const en = {
     notProvided: "Not provided",
     schematic: "Schematic elevation, not to scale",
     illustrative: "Illustrative massing: floor count not confirmed",
+    massingCaption: "Schematic 3D massing from the published floor count, not the architectural design",
+    massingLabel: "{name}: schematic 3D massing model generated from the published floor count. It is not the architectural design.",
+    dragToRotate: "Drag to rotate",
+    scrollCue: "Scroll",
     sqm: "m²",
     bedroomsShort: "bed",
     bedroom: "bedroom",
@@ -109,6 +113,7 @@ const en = {
     banner: "Demonstration inventory: unit data on this build is test data, not real availability.",
   },
   home: {
+    statement: "One practice takes each building from site to keys: it designs, builds and sells. {count} buildings in Athens and Corinth so far.",
     heroKicker: "Residential development · Athens · Greece",
     heroTitleA: "Built to be lived in.",
     heroTitleB: "Structured to be owned.",

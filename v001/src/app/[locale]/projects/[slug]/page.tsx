@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Elevation } from "@/components/Elevation";
+import { MassingModel } from "@/components/three/MassingModel";
 import { JsonLd } from "@/components/JsonLd";
 import { ChapterHead, Metric, StateMark } from "@/components/ui";
 import { AvailabilityExplorer } from "@/components/projects/AvailabilityExplorer";
@@ -62,67 +63,83 @@ export default async function DevelopmentPage({ params }: PageProps<"/[locale]/p
   return (
     <>
       <TrackView event="development_view" developmentId={dev.id} />
-      <section className="dev-hero shell" aria-labelledby="dev-title">
-        <nav className="breadcrumb" aria-label="Breadcrumb" style={{ marginBottom: "var(--s-5)" }}>
-          <Link href={href(locale, "/")}>Limar Homes</Link> <span aria-hidden="true">/</span>
-          <Link href={href(locale, "/projects")}>{dict.development.breadcrumb}</Link> <span aria-hidden="true">/</span>
-          <span aria-current="page">{dev.name}</span>
-        </nav>
-        <div className="dev-hero-grid">
-          <div className="dev-hero-copy">
-            <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
-              <span className="sheet-no">{dict.common.sheet} {dev.sheet}</span>
-              <StateMark status={dev.status} label={dict.status[dev.status]} />
-            </div>
-            <h1 className="display" id="dev-title" style={{ fontSize: "var(--step-5)", overflowWrap: "anywhere" }}>
-              {dev.name}
-            </h1>
-            <p className="kicker">
-              {loc(dev.locality, locale)} · {loc(dev.city, locale)}
-            </p>
-            <p className="lead">{loc(dev.copy.tagline, locale)}</p>
-            <div className="cta-row">
-              {dev.status === "selling" ? (
-                <>
-                  <Link className="btn btn--primary" href={units.length ? "#residences" : enquire("&interest=purchase")}>
-                    {units.length ? dict.explorer.title : dict.common.requestInformation} <span className="arrow">→</span>
+      <section className="dev-hero dev-stage obsidian" data-tone="dark" aria-labelledby="dev-title">
+        <div className="shell">
+          <nav className="breadcrumb enter-fade" aria-label="Breadcrumb" style={{ marginBottom: "var(--s-5)" }}>
+            <Link href={href(locale, "/")}>Limar Homes</Link> <span aria-hidden="true">/</span>
+            <Link href={href(locale, "/projects")}>{dict.development.breadcrumb}</Link> <span aria-hidden="true">/</span>
+            <span aria-current="page">{dev.name}</span>
+          </nav>
+          <div className="dev-hero-grid">
+            <div className="dev-hero-copy">
+              <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
+                <span className="sheet-no">{dict.common.sheet} {dev.sheet}</span>
+                <StateMark status={dev.status} label={dict.status[dev.status]} />
+              </div>
+              <h1 className="display enter-lines" id="dev-title" style={{ fontSize: "var(--step-5)", overflowWrap: "anywhere" }}>
+                <span className="mask">
+                  <span>{dev.name}</span>
+                </span>
+              </h1>
+              <p className="kicker">
+                {loc(dev.locality, locale)} · {loc(dev.city, locale)}
+              </p>
+              <p className="lead">{loc(dev.copy.tagline, locale)}</p>
+              <div className="cta-row">
+                {dev.status === "selling" ? (
+                  <>
+                    <Link className="btn btn--primary" href={units.length ? "#residences" : enquire("&interest=purchase")}>
+                      {units.length ? dict.explorer.title : dict.common.requestInformation} <span className="arrow">→</span>
+                    </Link>
+                    {dev.brochure ? (
+                      <a className="link-arrow" href={dev.brochure.href} download>
+                        {dict.common.downloadBrochure}
+                      </a>
+                    ) : (
+                      <Link className="link-arrow" href={enquire("&interest=brochure")}>
+                        {dict.common.requestBrochure}
+                      </Link>
+                    )}
+                  </>
+                ) : (
+                  <Link className="btn" href={href(locale, "/projects?status=selling")}>
+                    {dict.development.seeCurrent} <span className="arrow">→</span>
                   </Link>
-                  <Link className="link-arrow" href={enquire("&interest=brochure")}>
-                    {dict.common.requestBrochure}
-                  </Link>
-                </>
-              ) : (
-                <Link className="btn" href={href(locale, "/projects?status=selling")}>
-                  {dict.development.seeCurrent} <span className="arrow">→</span>
-                </Link>
-              )}
+                )}
+              </div>
             </div>
+            {dev.media.hero ? (
+              <figure className="hero-photo">
+                <Image src={dev.media.hero.src} alt={loc(dev.media.hero.alt, locale)} width={dev.media.hero.width} height={dev.media.hero.height} priority sizes="(max-width: 900px) 100vw, 55vw" />
+              </figure>
+            ) : (
+              <div className="dev-model enter-stage">
+                <MassingModel
+                  spec={dev.drawing}
+                  tone="dark"
+                  label={fill(dict.common.massingLabel, { name: dev.name })}
+                  caption={`${dict.common.sheet} ${dev.sheet} · ${dev.name} · ${dev.drawing.illustrative ? dict.common.illustrative : dict.common.massingCaption}`}
+                  hint={dict.common.dragToRotate}
+                posterCaption={`${dict.common.sheet} ${dev.sheet} · ${dev.name} · ${dev.drawing.illustrative ? dict.common.illustrative : dict.common.schematic}`}
+                  poster={<Elevation spec={dev.drawing} title={`${dev.name} — ${dict.common.schematic}`} compact />}
+                />
+              </div>
+            )}
           </div>
-          {dev.media.hero ? (
-            <figure className="hero-photo">
-              <Image src={dev.media.hero.src} alt={loc(dev.media.hero.alt, locale)} width={dev.media.hero.width} height={dev.media.hero.height} priority sizes="(max-width: 900px) 100vw, 55vw" />
-            </figure>
-          ) : (
-            <Elevation
-              spec={dev.drawing}
-              title={`${dev.name} — ${dict.common.schematic}`}
-              caption={`${dict.common.sheet} ${dev.sheet} · ${dev.name} · ${dev.drawing.illustrative ? dict.common.illustrative : dict.common.schematic}`}
-            />
+          <dl className="metrics" style={{ marginTop: "var(--s-7)" }} aria-label={dict.development.metrics}>
+            <Metric label={dict.common.units} value={loc(dev.unitsTotalLabel, locale)} tbc={t.includes("unitsTotal")} />
+            <Metric label={dict.common.size} value={formatRange(dev.sizeMin, dev.sizeMax, locale)} tbc={t.includes("sizeRange") || t.includes("sizeMax")} />
+            <Metric label={dict.common.bedrooms} value={`${dev.bedroomsMin}–${dev.bedroomsMax}`} />
+            <Metric label={dict.common.completion} value={loc(dev.completion.label, locale)} tbc={t.includes("completion")} />
+            <Metric label={dict.common.energyClass} value={dev.energyClassLabel} tbc={t.includes("energyClass")} />
+            {dev.floors != null && <Metric label={dict.common.floors} value={dev.floors} tbc={t.includes("floors")} />}
+          </dl>
+          {t.length > 0 && (
+            <p className="label" style={{ marginTop: "var(--s-3)" }}>
+              {dict.development.unverifiedNote}
+            </p>
           )}
         </div>
-        <dl className="metrics" style={{ marginTop: "var(--s-7)" }} aria-label={dict.development.metrics}>
-          <Metric label={dict.common.units} value={loc(dev.unitsTotalLabel, locale)} tbc={t.includes("unitsTotal")} />
-          <Metric label={dict.common.size} value={formatRange(dev.sizeMin, dev.sizeMax, locale)} tbc={t.includes("sizeRange") || t.includes("sizeMax")} />
-          <Metric label={dict.common.bedrooms} value={`${dev.bedroomsMin}–${dev.bedroomsMax}`} />
-          <Metric label={dict.common.completion} value={loc(dev.completion.label, locale)} tbc={t.includes("completion")} />
-          <Metric label={dict.common.energyClass} value={dev.energyClassLabel} tbc={t.includes("energyClass")} />
-          {dev.floors != null && <Metric label={dict.common.floors} value={dev.floors} tbc={t.includes("floors")} />}
-        </dl>
-        {t.length > 0 && (
-          <p className="label" style={{ marginTop: "var(--s-3)" }}>
-            {dict.development.unverifiedNote}
-          </p>
-        )}
       </section>
 
       <nav className="subnav" aria-label={dev.name}>
@@ -272,9 +289,15 @@ export default async function DevelopmentPage({ params }: PageProps<"/[locale]/p
             <Link className="btn btn--primary" href={enquire("&interest=purchase")}>
               {dict.common.requestInformation} <span className="arrow">→</span>
             </Link>
-            <Link className="btn" href={enquire("&interest=brochure")}>
-              {dict.common.requestBrochure}
-            </Link>
+            {dev.brochure ? (
+              <a className="btn" href={dev.brochure.href} download>
+                {dict.common.downloadBrochure}
+              </a>
+            ) : (
+              <Link className="btn" href={enquire("&interest=brochure")}>
+                {dict.common.requestBrochure}
+              </Link>
+            )}
           </div>
         </div>
       </section>

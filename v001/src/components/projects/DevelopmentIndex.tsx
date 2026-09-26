@@ -86,8 +86,8 @@ export function DevelopmentIndex({ locale, entries, dict }: { locale: Locale; en
             const url = href(locale, `/projects/${d.slug}`);
             return (
               <article key={d.id} className={`dev-entry${d.status === "sold-out" ? " dev-entry--sold" : ""}`} aria-labelledby={`dev-${d.id}`}>
-                <div className="dev-entry-drawing">
-                  <Elevation spec={d.drawing} title={`${d.name} — ${dict.common.schematic}`} caption={`${dict.common.sheet} ${d.sheet} · ${d.drawing.illustrative ? dict.common.illustrative : dict.common.schematic}`} animate={false} />
+                <div className="dev-entry-drawing feature-visual" data-tilt="3">
+                  <Elevation spec={d.drawing} title={`${d.name} — ${dict.common.schematic}`} caption={`${dict.common.sheet} ${d.sheet} · ${d.drawing.illustrative ? dict.common.illustrative : dict.common.schematic}`} />
                 </div>
                 <div className="dev-entry-copy">
                   <div style={{ display: "flex", gap: 16, alignItems: "center", flexWrap: "wrap" }}>

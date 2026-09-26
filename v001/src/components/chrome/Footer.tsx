@@ -8,7 +8,7 @@ import { CookieSettingsButton } from "./Dock";
 export function Footer({ locale, dict, developments }: { locale: Locale; dict: Dictionary; developments: Array<{ slug: string; name: string }> }) {
   const year = new Date().getFullYear();
   return (
-    <footer className="site-footer">
+    <footer className="site-footer" data-tone="dark">
       <div className="shell">
         <div className="footer-grid">
           <div className="stack-4">
@@ -79,6 +79,9 @@ export function Footer({ locale, dict, developments }: { locale: Locale; dict: D
             </div>
           </div>
         </div>
+      </div>
+      <div className="footer-mark" data-enter="" aria-hidden="true">
+        <span>LIMAR</span>
       </div>
     </footer>
   );

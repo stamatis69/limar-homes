@@ -3,10 +3,20 @@
  *   npm run verify:data        → integrity report (fails on broken data)
  *   npm run verify:production  → also fails on launch blockers (fixture data, no enquiry delivery target)
  */
+import { existsSync } from "node:fs";
+import { join } from "node:path";
 import { developments } from "../src/data/developments";
 import { canonicalInventory } from "../src/data/inventory/canonical";
 
 const production = process.argv.includes("--production");
+
+/** Local media must exist under public/ and must never be a remote hotlink. */
+function checkMedia(owner: string, src: string | undefined | null, errs: string[]) {
+  if (!src) return;
+  if (/^https?:\/\//i.test(src)) return errs.push(`${owner}: ${src} is remote — download it into public/media and record its licence in ASSET_SOURCES.md`);
+  if (!src.startsWith("/")) return errs.push(`${owner}: ${src} must be an absolute public path (e.g. /media/…)`);
+  if (!existsSync(join(process.cwd(), "public", src))) errs.push(`${owner}: ${src} does not exist in public/`);
+}
 const errors: string[] = [];
 const blockers: string[] = [];
 const warnings: string[] = [];
@@ -23,6 +33,12 @@ for (const d of developments) {
   }
   if (d.unverified.length) warnings.push(`${d.id}: unverified fields → ${d.unverified.join(", ")}`);
   if (d.goldenVisa.limarStatement && d.goldenVisa.route === "unconfirmed") warnings.push(`${d.id}: Golden Visa route per residence not confirmed by counsel`);
+  checkMedia(`${d.id} hero`, d.media.hero?.src, errors);
+  d.media.gallery.forEach((m, i) => checkMedia(`${d.id} gallery[${i}]`, m.src, errors));
+  checkMedia(`${d.id} brochure`, d.brochure?.href, errors);
+  for (const m of [d.media.hero, ...d.media.gallery]) {
+    if (m && (!m.alt.en.trim() || !m.alt.el.trim() || !m.alt.tr.trim())) errors.push(`${d.id}: ${m.src} is missing alt text in en/el/tr`);
+  }
 }
 
 const unitIds = new Set<string>();
@@ -33,6 +49,7 @@ for (const u of canonicalInventory.units) {
   const dev = developments.find((d) => d.id === u.developmentId);
   if (dev?.status === "sold-out" && u.status !== "sold") errors.push(`${u.id}: development sold out but unit is ${u.status}`);
   if (u.area <= 0) errors.push(`${u.id}: invalid area`);
+  checkMedia(`${u.id} floorplan`, u.floorplan?.src, errors);
 }
 if (canonicalInventory.units.length && !canonicalInventory.asOf) errors.push("canonical inventory has units but no asOf timestamp");
 for (const d of developments.filter((x) => x.status === "selling")) {

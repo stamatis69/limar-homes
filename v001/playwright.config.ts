@@ -1,7 +1,9 @@
 import { defineConfig, devices } from "@playwright/test";
 
 const PORT = 3100;
-const env = "LIMAR_INVENTORY=fixture LIMAR_DEPLOY_ENV=test ENQUIRY_RATE_LIMIT=20";
+// NEXT_PUBLIC_FORCE_WEBGL: the test browser has only software WebGL, where the site normally keeps the
+// static poster; forcing the 3D path lets the suite exercise the WebGL massing model as well.
+const env = "LIMAR_INVENTORY=fixture LIMAR_DEPLOY_ENV=test ENQUIRY_RATE_LIMIT=20 NEXT_PUBLIC_FORCE_WEBGL=1";
 
 /**
  * Acceptance tests run against a production build using the labelled QA fixture

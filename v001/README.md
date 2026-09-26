@@ -18,6 +18,7 @@ npm test                    # unit tests (Pathfinder logic)
 npm run test:e2e            # Playwright acceptance suite (builds with the QA fixture on :3100)
 npm run verify:data         # canonical data integrity
 npm run verify:production   # launch gate: fails on fixture data / missing enquiry delivery target
+npm run import:inventory -- export.csv [--dry-run]   # import Limar's unit schedule (docs/INVENTORY_IMPORT.md)
 ```
 
 Playwright uses the Chromium at `/opt/pw-browsers/chromium`. Override it with `PW_CHROMIUM=/path/to/chrome`.
@@ -32,6 +33,7 @@ Playwright uses the Chromium at `/opt/pw-browsers/chromium`. Override it with `P
 | `ENQUIRY_WEBHOOK_URL` / `ENQUIRY_WEBHOOK_SECRET` | Server-only CRM/automation endpoint. Payloads are signed with HMAC-SHA256 in `X-Limar-Signature` |
 | `ENQUIRY_RATE_LIMIT` | Enquiries per client per 10 minutes (default 5) |
 | `MERQON_SITE_ID` | Registry-allocated `MQ-YYYY-NNNN`. Without it, provenance is disabled in production |
+| `NEXT_PUBLIC_FORCE_WEBGL=1` | **Test builds only.** Renders the 3D model on software WebGL so e2e can exercise it. Never set it in production |
 
 ## Where things live
 
@@ -47,6 +49,10 @@ Playwright uses the Chromium at `/opt/pw-browsers/chromium`. Override it with `P
 | Enquiry API / delivery | `src/app/api/enquiry/route.ts`, `src/lib/enquiry/deliver.ts` |
 | Comparison state | `src/lib/client/compare-store.ts` (IDs only, re-resolved via `/api/units`) |
 | Merqon signature | `src/lib/merqon.ts` |
+| Palette and type tokens | `src/styles/tokens.css` |
+| Experience layer (reveals, scroll progress, dark chapters, 3D stage) | `src/styles/experience.css`, `src/lib/client/motion.ts`, `src/components/motion/*` |
+| 3D schematic massing model | `src/components/three/MassingModel.tsx` (lazy, hardware-WebGL only), `massing-scene.ts` (three.js) |
 
-## Adding the real unit schedule
-Export units from Limar's sales system into `canonicalInventory.units` (shape: `Unit` in `src/lib/types.ts`), set `asOf`, and run `npm run verify:data`. The explorer, comparison, Pathfinder matches, enquiry validation and home "current opportunity" all update from that one list. Leave `price: null` unless Limar publishes a current price.
+## Adding Limar's real data
+- **Unit schedule:** `npm run import:inventory -- export.csv`. It validates the export and writes `src/data/inventory/canonical-units.json` (see `docs/INVENTORY_IMPORT.md`). The explorer, comparison, Pathfinder matches, enquiry validation and home "current opportunity" all update from it. Prices stay empty unless Limar publishes current list prices.
+- **Photography, renders, floorplans, brochure:** see `docs/MEDIA_INTAKE.md`. `npm run verify:data` checks that every referenced file exists, is local and has alt text in en/el/tr.

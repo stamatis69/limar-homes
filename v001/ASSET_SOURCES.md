@@ -14,6 +14,17 @@ Rule: an asset with an unknown license is not shipped. Retrieval date for every 
 | `public/fixtures/sample-plan.svg` | Original, labelled "QA fixture, not a real layout" | This project | Project asset | — | n/a | — | Fixture mode only | Test-only; never shipped as real data |
 | `public/fixtures/gallery-sample.png` | Rendered from the project's own OG image route | This project | Project asset | — | n/a | — | Fixture mode only | Test-only |
 
+| 3D massing model (WebGL, generated at runtime) | `src/components/three/massing-scene.ts`, from each development's `DrawingSpec` | Original to this project | Project code | — | Yes | — | Home hero, development heroes | Approved. Captioned "schematic 3D massing … not the architectural design" |
+
+## Third-party code shipped to the browser
+| Package | Version | Licence | Use |
+|---|---|---|---|
+| `three` | 0.186.1 | MIT (© 2010–2026 three.js authors) | WebGL massing model, lazy-loaded chunk |
+| `lenis` | 1.3.26 | MIT (© darkroom.engineering) | Smooth wheel scrolling on fine pointers |
+| `next`, `react`, `react-dom` | see package.json | MIT | Framework |
+
+The licence texts ship in `node_modules/<package>/LICENSE`. Both new packages were checked on npm before installation.
+
 ## Not used, and why
 - **Limar photography, renders, floorplans, brochures and logo.** These were not retrievable: the live site is blocked by the environment's network policy, and no files were supplied. **BLOCKED.** Media slots exist (`development.media.hero`, `.gallery`, `unit.floorplan`, `development.brochure`) and render automatically once files are added. The wordmark is typographic until the official logo file is supplied.
 - **Stock or AI imagery of buildings or people.** Deliberately not used (brief §45: no fake buildings, no generic people).

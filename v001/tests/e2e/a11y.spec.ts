@@ -4,7 +4,24 @@ import { addToCompare, decideConsent, pickOption } from "./helpers";
 
 const PAGES = ["/", "/projects", "/projects/terrace-heights", "/projects/la-riviera", "/golden-visa", "/golden-visa/pathfinder", "/about", "/contact", "/news", "/news/greek-golden-visa-after-law-5100-2024", "/privacy-policy", "/el", "/tr/projeler/terrace-heights", "/does-not-exist"];
 
+/**
+ * Scroll reveals fade content in over ~1s. Contrast is judged on the settled page, not on a frame
+ * captured mid-fade, so wait until every finite animation/transition has finished (infinite
+ * decorative loops such as the scroll cue are ignored).
+ */
+async function settle(page: import("@playwright/test").Page) {
+  await page.waitForFunction(
+    () =>
+      document
+        .getAnimations()
+        .every((a) => a.playState !== "running" || a.effect?.getComputedTiming().iterations === Infinity),
+    undefined,
+    { timeout: 8000 },
+  );
+}
+
 async function audit(page: import("@playwright/test").Page, label: string) {
+  await settle(page);
   const results = await new AxeBuilder({ page: page as never }).withTags(["wcag2a", "wcag2aa", "wcag21a", "wcag21aa", "wcag22aa"]).analyze();
   const serious = results.violations.filter((v) => v.impact === "serious" || v.impact === "critical");
   expect(serious.map((v) => `${label}: ${v.id} — ${v.nodes.map((n) => n.target.join(" ")).slice(0, 3).join(", ")}`)).toEqual([]);
@@ -14,6 +31,7 @@ test.describe("Accessibility (WCAG 2.2 AA, axe)", () => {
   test.beforeEach(async ({ page }) => decideConsent(page));
 
   test("static pages", async ({ page }) => {
+    test.setTimeout(150_000); // 14 pages, each audited after its entrance animations settle
     for (const p of PAGES) {
       await page.goto(p);
       await audit(page, p);

@@ -1,23 +1,37 @@
 :root {
-  /* Material palette — limestone, travertine, ink, Aegean, bronze, olive */
-  --paper: #f1ece3;
-  --paper-2: #e7e0d4;
-  --white: #fbfaf7;
-  --ink: #1b1a18;
-  --ink-2: #57534c;
-  --ink-3: #8a857b;
-  --line: rgba(27, 26, 24, 0.16);
-  --line-strong: rgba(27, 26, 24, 0.42);
-  --aegean: #1e3a5c;
+  /*
+   * Palette — "Obsidian & Travertine" (quiet luxury).
+   * Deep near-black anchor, warm travertine neutrals, one restrained champagne/brass accent.
+   * Every text pairing below is checked against WCAG AA (see DESIGN_DIRECTION.md for ratios).
+   */
+  --paper: #f4efe7;          /* travertine ivory — reading surface */
+  --paper-2: #e9e1d4;        /* honed stone */
+  --white: #fbf8f3;          /* porcelain */
+  --ink: #15171a;            /* obsidian ink — 15.7:1 on paper */
+  --ink-2: #4f4b45;          /* warm graphite — 7.6:1 on paper */
+  --ink-3: #857f75;          /* decorative / large text only — 3.5:1 on paper */
+  --line: rgba(21, 23, 26, 0.14);
+  --line-strong: rgba(21, 23, 26, 0.38);
+
+  --aegean: #1e3a5c;         /* availability + focus — 10.1:1 on paper */
   --aegean-2: #2c5582;
   --aegean-tint: rgba(30, 58, 92, 0.09);
-  --bronze: #7a5629;
-  --bronze-tint: rgba(138, 101, 56, 0.14);
+  --bronze: #7a5629;         /* accent text on light — 5.8:1 on paper */
+  --bronze-tint: rgba(138, 101, 56, 0.13);
+  --brass: #b08d57;          /* hairlines, rules, ornaments */
+  --champagne: #dcc7a1;      /* accent on dark — 11.5:1 on obsidian */
+  --champagne-2: #ebdcc0;
   --olive: #5b6647;
-  --night: #14202e;
-  --night-2: #1c2b3d;
-  --on-night: #efe9de;
-  --on-night-2: #b9b3a7;
+
+  --night: #0e1114;          /* obsidian */
+  --night-2: #161a1f;
+  --night-3: #1f252c;
+  --on-night: #f2ece3;       /* 16.1:1 on obsidian */
+  --on-night-2: #b3ab9e;     /* 8.3:1 on obsidian */
+  --on-night-3: #6f6a63;     /* large text only — 3.5:1 on obsidian */
+  --line-night: rgba(242, 236, 227, 0.14);
+  --line-night-strong: rgba(242, 236, 227, 0.34);
+
   --danger: #9b2c1f;
   --danger-tint: rgba(155, 44, 31, 0.08);
   --success: #2f5d3a;
@@ -26,7 +40,7 @@
   --state-available: var(--aegean);
   --state-offer: var(--bronze);
   --state-reserved: var(--ink-2);
-  --state-sold: rgba(27, 26, 24, 0.22);
+  --state-sold: rgba(21, 23, 26, 0.22);
 
   /* Type */
   --font-display: "Noto Serif Display Variable", "Noto Serif Display", Georgia, "Times New Roman", serif;
@@ -41,6 +55,7 @@
   --step-3: clamp(1.8rem, 1.4rem + 1.6vw, 2.6rem);
   --step-4: clamp(2.3rem, 1.6rem + 3vw, 4rem);
   --step-5: clamp(2.8rem, 1.6rem + 5.4vw, 6.6rem);
+  --step-6: clamp(3.4rem, 1.4rem + 8.6vw, 9.6rem);
 
   /* Space (8-pt, fluid at the top end) */
   --s-1: 4px;
@@ -52,11 +67,17 @@
   --s-7: 48px;
   --s-8: clamp(56px, 6vw, 88px);
   --s-9: clamp(72px, 9vw, 144px);
+  --s-10: clamp(96px, 13vw, 208px);
 
   --gutter: clamp(16px, 4vw, 56px);
   --max: 1440px;
   --header-h: 68px;
   --radius: 2px;
   --ease: cubic-bezier(0.2, 0.7, 0.1, 1);
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-inout: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-reveal: 1.1s;
   --dock-h: 0px;
+  --shadow-soft: 0 1px 2px rgba(14, 17, 20, 0.04), 0 12px 32px -12px rgba(14, 17, 20, 0.18);
+  --shadow-deep: 0 2px 4px rgba(14, 17, 20, 0.06), 0 40px 80px -24px rgba(14, 17, 20, 0.45);
 }
